@@ -7,7 +7,6 @@ const bodyParser = require("body-parser")
 const app = express()
 
 const userRoutes = require("./routes/user")
-
 const path = require("./views/path")
 
 app.set('view engine','ejs')
@@ -24,6 +23,7 @@ app.use((req,res)=>{
 
 app.listen(5000,()=>{
     console.log('[+]Server is up and ready...')
+    console.log("hi")
     mongoose.connect(process.env.mongoDbURI).then(()=>{
         console.log("[+]DB connected to ", process.env.mongoDbURI)
     })
