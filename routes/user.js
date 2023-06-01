@@ -4,13 +4,17 @@ const path = require("../views/path")
 const router = express.Router()
 
 
+const userController = require("../controller/user")
+
 router.get("/login",(req,res)=>{
     // console.log()
-    res.sendFile(path+"/user/login.html")
+    res.render("user/login")
 })
 
+router.post("/login",userController.login)
+
 router.get("/register",(req,res)=>{
-    res.sendFile(path+"/user/register.html")
+    // res.render(path+"/user/register.html")
 })
 
 module.exports=router
