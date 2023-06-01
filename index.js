@@ -23,7 +23,7 @@ app.use((req,res)=>{
 
 app.listen(5000,()=>{
     console.log('[+]Server is up and ready...')
-    console.log("hi")
+    console.log("[+]This is a new feature...")
     console.log('[+]http://localhost:5000')
     mongoose.connect(process.env.mongoDbURI).then(()=>{
         console.log("[+]DB connected to ", process.env.mongoDbURI)
