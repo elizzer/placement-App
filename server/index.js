@@ -1,32 +1,27 @@
 const express = require("express")
 const mongoose = require("mongoose")
+const cors = require('cors');
 require("dotenv").config()
-
 const bodyParser = require("body-parser")
 
 const app = express()
 
-const userRoutes = require("./routes/user")
 
+//MiddleWares
 
-const path = require('path')
-
-app.set('view engine','ejs')
-app.set("views","views")
-
-const cors = require('cors');
 app.use(cors())
-app.use(express.static(path.join(__dirname,'public')))
 
 app.use(bodyParser.urlencoded())
 app.use(bodyParser.json())
 
 
-app.use("/user",userRoutes)
-app.use((req,res)=>{
-    res.render("404")
-})
+//routes configs
+const userRoutes = require("./routes/user")
 
+app.use('/user',userRoutes)
+
+
+//server and DB config
 app.listen(5000,()=>{
     console.log('[+]Server is up and ready...')
     console.log('[+]http://localhost:5000')
