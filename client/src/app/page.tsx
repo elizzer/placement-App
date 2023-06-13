@@ -15,7 +15,7 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            By{' '}
+            By{' Author Adithya'}
             <Image
               src="/vercel.svg"
               alt="Vercel Logo"
