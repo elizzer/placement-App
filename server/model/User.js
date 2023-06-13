@@ -22,11 +22,11 @@ const userSchema = mongoose.Schema({
     github:{
         type:String
     },
-    name:{
+    userName:{
         type:String,
         required:[true,"Name is required "]
         },
-    roll:{
+    rollno:{
         type:Number,
         required:[true,"Roll number is required"]
     },
@@ -42,6 +42,17 @@ const userSchema = mongoose.Schema({
         type:String,
         enum:["student","PR","PA"],
         default:"student"
+    },
+    periodOfStudy:{
+        from:{
+            type:Number,
+            required:true
+
+        },
+        to:{
+            type:Number,
+            required:true
+        },
     }
 
 });
