@@ -1,9 +1,55 @@
 const bcrypt = require("bcrypt")
-
+const jwt = require("jsonwebtoken")
 const User = require("../model/User")
 
-exports.login=(req,res)=>{
+exports.login=async(req,res)=>{
     console.log('{+}Login...',req.body)
+    //validate the data
+
+    // email,password
+
+    var email = req.body.email
+    var password = req.body.password
+
+    try{
+        if(isEmpty(email) || isEmpty(password)){
+            throw{
+                message:"No filed should be empty"
+            }
+        }
+        const user=await User.findOne({email:email})
+        if(!user){
+            throw{
+                message:"Invalid Credentials"
+            }
+        }
+        console.log('[+]User of the email given is ',user)
+        console.log("[+]password and hash",user.password,password)
+        let match= bcrypt.compareSync(password,user.password)
+        
+        console.log("[+]Passsword match result ",match)
+
+        if(!match){
+            throw{
+                message:"Invalid crendentials!!"
+            }
+        }
+        var JWToken= await jwt.sign({id:user._id},process.env.JWT_SECRET)
+
+        return res.status(200).json({
+            error:true,
+            message:"User verified successfully",
+            JWT:JWToken
+        })
+
+    }catch(e){
+        console.log("[❌]Thrown error ",e);
+        return res.json({
+            error:true,
+            message:e
+        })
+    }
+
 }
 
 exports.register=async(req,res)=>{
@@ -130,6 +176,7 @@ exports.register=async(req,res)=>{
     }catch(e){
         // return the errors in data to the frontend to display
         console.log("[❌]Thrown error ",e);
+    
         return res.json({
             error:true,
             message:e
@@ -144,4 +191,27 @@ exports.register=async(req,res)=>{
 
 function isEmpty(x){
     return x===undefined || x==="";
+}
+
+exports.requiredSignin=async(req,res,next)=>{
+    try{
+        var token = req.headers['authorization'].split(" ")[1]
+        console.log('[+] RequiredSignin ',token)
+        var tokenData = jwt.verify(token,process.env.JWT_SECRET)
+        var user = await User.findById(tokenData.id)
+
+        if(!user){
+            throw " "
+        }else{
+            console.log('[+]User trying to login ',user)
+        }
+
+    }catch(e){
+        return res.status(403).json({
+            error:true,
+            message:{message:"User not authorized"}
+        })
+    }
+
+    next()
 }
