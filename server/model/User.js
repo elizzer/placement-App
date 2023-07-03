@@ -18,7 +18,7 @@ const userSchema = mongoose.Schema({
     },
     photo:{
         type:String,
-        default:"This is default"
+        default:"default.jpg"
     },
     linkedIn:{
         type:String,

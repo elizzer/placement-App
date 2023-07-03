@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken")
 const User = require("../model/User")
 const fs = require('fs')
 
+const {root} = require("../path")
+
 exports.login=async(req,res)=>{
     console.log('{+}Login...',req.body)
     //validate the data
@@ -36,11 +38,12 @@ exports.login=async(req,res)=>{
             }
         }
         var JWToken= await jwt.sign({id:user._id},process.env.JWT_SECRET)
-
+        user.password=undefined
         return res.status(200).json({
             error:true,
             message:"User verified successfully",
-            JWT:JWToken
+            JWT:JWToken,
+            user:user
         })
 
     }catch(e){
@@ -247,6 +250,18 @@ exports.profilePhoto= async(req,res)=>{
     res.json({
         error:false
     })
+}
+
+exports.getProfilePhoto= async(req,res)=>{
+  
+
+    try{
+        const user = await User.findById(req.params.userid);
+        console.log('[+]User id param ',`${root}/uploads/profile/${user.photo}`)
+        res.sendFile(`${root}/uploads/profile/${user.photo}`)
+    }catch(e){
+        console.log('[❌]Error in  getting the profile image',e)
+    }
 }
 
 class validation{

@@ -15,11 +15,9 @@ const profileStorage = multer.diskStorage({
     }
 })
 
-// const upload = multer({dest:'uploads/profile/'})
-
 const upload = multer({storage:profileStorage})
 
-const {login,register,requiredSignin,update,profilePhoto}= require('../controller/user')
+const {login,register,requiredSignin,update,profilePhoto,getProfilePhoto}= require('../controller/user')
 
 //user register
 router.post("/register",register)
@@ -31,7 +29,10 @@ router.put("/updateProfile",requiredSignin,update)
 
 //upload profile image
 router.post("/upload/profilePhoto",requiredSignin,upload.single("profilePhoto"),profilePhoto)
-//update profile image
+//get profile image
+router.get("/profilePhoto/:userid",getProfilePhoto)
+
+
 //change password 
 
 
