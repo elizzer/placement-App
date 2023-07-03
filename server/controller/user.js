@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const User = require("../model/User")
+const fs = require('fs')
 
 exports.login=async(req,res)=>{
     console.log('{+}Login...',req.body)
@@ -204,6 +205,7 @@ exports.requiredSignin=async(req,res,next)=>{
             throw " "
         }else{
             console.log('[+]User trying to login ',user)
+            req.userId=user._id
         }
 
     }catch(e){
@@ -215,3 +217,44 @@ exports.requiredSignin=async(req,res,next)=>{
 
     next()
 }
+
+exports.update=async(req,res)=>{
+    console.log('[+]Update profile user data', req.body)
+    validation.linkedIn(req.body.linkedIn)
+}
+
+exports.profilePhoto= async(req,res)=>{
+    console.log('[+]A profile photo is been uploaded',req.filename)
+    console.log('[+]A the user profile ',req.userId)
+    try{
+        const user=await User.findById(req.userId)
+        var oldPhoto = user.photo;
+        if(!isEmpty(oldPhoto)){
+            fs.unlinkSync(`uploads/profile/${oldPhoto}`)
+        }
+        user.photo=req.filename
+        console.log(user)
+        try{
+            await user.save()
+        }catch(e){
+            throw new Error('Unable to save updated image')
+        }
+
+    }catch(e){
+        console.error('[❌]Error updating a users profile picture ',e)
+        fs.unlinkSync(`uploads/profile/${req.filename}`)
+    }
+    res.json({
+        error:false
+    })
+}
+
+class validation{
+    static linkedIn(link){
+        var regex=new RegExp("/^(http(s)?:\/\/)?([\w]+\.)?linkedin\.com\/(pub|in|profile)\/([-a-zA-Z0-9]+)")
+        var result = regex.test(link)
+
+        console.log(result)
+    }
+}
+

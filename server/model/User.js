@@ -16,6 +16,10 @@ const userSchema = mongoose.Schema({
         type:String,
         required:[true,"Password is required "]
     },
+    photo:{
+        type:String,
+        default:"This is default"
+    },
     linkedIn:{
         type:String,
     },
