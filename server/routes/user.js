@@ -26,15 +26,16 @@ router.post("/login",login)
 
 //profile update
 router.put("/updateProfile",requiredSignin,update)
-
 //upload profile image
 router.post("/upload/profilePhoto",requiredSignin,upload.single("profilePhoto"),profilePhoto)
 //get profile image
 router.get("/profilePhoto/:userid",getProfilePhoto)
 
+//user login with google
 
 //change password 
 
+//user change role
 
 router.get("/get",requiredSignin)
 

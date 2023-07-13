@@ -29,3 +29,4 @@ app.listen(5000,()=>{
         console.log("[+]DB connected to ", process.env.mongoDbURI)
     })
 })
+

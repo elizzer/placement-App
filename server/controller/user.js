@@ -5,57 +5,6 @@ const fs = require('fs')
 
 const {root} = require("../path")
 
-exports.login=async(req,res)=>{
-    console.log('{+}Login...',req.body)
-    //validate the data
-
-    // email,password
-
-    var email = req.body.email
-    var password = req.body.password
-
-    try{
-        if(isEmpty(email) || isEmpty(password)){
-            throw{
-                message:"No filed should be empty"
-            }
-        }
-        const user=await User.findOne({email:email})
-        if(!user){
-            throw{
-                message:"Invalid Credentials"
-            }
-        }
-        console.log('[+]User of the email given is ',user)
-        console.log("[+]password and hash",user.password,password)
-        let match= bcrypt.compareSync(password,user.password)
-        
-        console.log("[+]Passsword match result ",match)
-
-        if(!match){
-            throw{
-                message:"Invalid crendentials!!"
-            }
-        }
-        var JWToken= await jwt.sign({id:user._id},process.env.JWT_SECRET)
-        user.password=undefined
-        return res.status(200).json({
-            error:true,
-            message:"User verified successfully",
-            JWT:JWToken,
-            user:user
-        })
-
-    }catch(e){
-        console.log("[❌]Thrown error ",e);
-        return res.json({
-            error:true,
-            message:e
-        })
-    }
-
-}
-
 exports.register=async(req,res)=>{
     /*
     email 
@@ -192,6 +141,56 @@ exports.register=async(req,res)=>{
         message:"[✅] Validation of data is successfull..."
     })
 }
+exports.login=async(req,res)=>{
+    console.log('{+}Login...',req.body)
+    //validate the data
+    // email,password
+
+    var email = req.body.email
+    var password = req.body.password
+
+    try{
+        if(isEmpty(email) || isEmpty(password)){
+            throw{
+                message:"No filed should be empty"
+            }
+        }
+        const user=await User.findOne({email:email})
+        if(!user){
+            throw{
+                message:"Invalid Credentials"
+            }
+        }
+        console.log('[+]User of the email given is ',user)
+        console.log("[+]password and hash",user.password,password)
+        let match= bcrypt.compareSync(password,user.password)
+        
+        console.log("[+]Passsword match result ",match)
+
+        if(!match){
+            throw{
+                message:"Invalid crendentials!!"
+            }
+        }
+        var JWToken= await jwt.sign({id:user._id},process.env.JWT_SECRET)
+        user.password=undefined
+        return res.status(200).json({
+            error:true,
+            message:"User verified successfully",
+            JWT:JWToken,
+            user:user
+        })
+
+    }catch(e){
+        console.log("[❌]Thrown error ",e);
+        return res.json({
+            error:true,
+            message:e
+        })
+    }
+
+}
+
 
 function isEmpty(x){
     return x===undefined || x==="";
@@ -261,7 +260,15 @@ exports.getProfilePhoto= async(req,res)=>{
         res.sendFile(`${root}/uploads/profile/${user.photo}`)
     }catch(e){
         console.log('[❌]Error in  getting the profile image',e)
+        res.json({
+            error:true,
+            message:e
+        })
     }
+}
+
+exports.PR =(req,res,next)=>{
+    console.log('[+]PR check')
 }
 
 class validation{
