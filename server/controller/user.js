@@ -40,7 +40,7 @@ exports.login=async(req,res)=>{
         var JWToken= await jwt.sign({id:user._id},process.env.JWT_SECRET)
         user.password=undefined
         return res.status(200).json({
-            error:true,
+            error:false,
             message:"User verified successfully",
             JWT:JWToken,
             user:user
@@ -254,13 +254,65 @@ exports.profilePhoto= async(req,res)=>{
 
 exports.getProfilePhoto= async(req,res)=>{
   
-
     try{
         const user = await User.findById(req.params.userid);
         console.log('[+]User id param ',`${root}/uploads/profile/${user.photo}`)
         res.sendFile(`${root}/uploads/profile/${user.photo}`)
     }catch(e){
         console.log('[❌]Error in  getting the profile image',e)
+    }
+}
+
+exports.retrieveDataWhileUpdateProfile = async(req,res)=>{
+ const id=req.params.id;
+ console.log(id);
+ let user;
+ try{
+    user = await User.findById(id);
+    user.password = undefined;
+ }catch(err){
+    return console.log(err);
+ }
+ if(!user){
+    return res.status(404).json({message:"No user Found"});
+ }
+ console.log(user);
+ return res.status(200).json({user});
+}
+
+exports.updateProfile = async(req,res)=>{
+    const id = req.params.id;
+    const{email,userName,rollno,periodOfStudy,branch} = req.body;
+    if(
+        !email &&
+        email.trim()==""&&
+        !userName &&
+        userName.trim()==""&&
+        !rollno &&
+        rollno.trim()==""&&
+        !periodOfStudy &&
+        periodOfStudy.trim()==""&&
+        !branch &&
+        branch.trim()==""
+    ){
+        return res.status(422).json({message:"Invalid Data"});
+    }
+    let user;
+    try{
+        user = await User.updateOne({"_id":id},{
+            $set : {
+                "email" : email,
+                "userName" : userName,
+                "rollno" : rollno,
+                "periodOfStudy" : periodOfStudy,
+                "branch" : branch
+            }
+        });
+        return res.json({
+            message:"update successfull"
+        });
+    }catch{
+        return res.status(500).json({message:"Update fail"});
     }
 }
 

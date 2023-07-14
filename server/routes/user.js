@@ -17,15 +17,17 @@ const profileStorage = multer.diskStorage({
 
 const upload = multer({storage:profileStorage})
 
-const {login,register,requiredSignin,update,profilePhoto,getProfilePhoto}= require('../controller/user')
+const {login,register,requiredSignin,profilePhoto,getProfilePhoto,updateProfile,retrieveDataWhileUpdateProfile}= require('../controller/user')
 
 //user register
 router.post("/register",register)
 //user login
 router.post("/login",login)
+//retrieving user details while update
+router.get("/updateProfile/:id",requiredSignin,retrieveDataWhileUpdateProfile)
 
 //profile update
-router.put("/updateProfile",requiredSignin,update)
+router.put("/updateProfile/submit/:id",requiredSignin,updateProfile)
 
 //upload profile image
 router.post("/upload/profilePhoto",requiredSignin,upload.single("profilePhoto"),profilePhoto)
