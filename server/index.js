@@ -16,7 +16,7 @@ app.use(bodyParser.json())
 
 
 //routes configs
-const userRoutes = require("./routes/user")
+const userRoutes = require("./routes/user/user")
 
 app.use('/user',userRoutes)
  

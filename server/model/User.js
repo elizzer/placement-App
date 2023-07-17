@@ -57,6 +57,18 @@ const userSchema = mongoose.Schema({
             type:Number,
             required:true
         },
+    },
+    resume:{
+        main:{
+            storedName:String,
+            displayName:String
+        },
+        resumes:[
+            {
+                storedName:String,
+                displayName:String
+            }
+        ]
     }
 
 });

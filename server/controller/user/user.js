@@ -1,9 +1,11 @@
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
-const User = require("../model/User")
+const User = require("../../model/User")
 const fs = require('fs')
 
-const {root} = require("../path")
+
+
+const {root} = require("../../path")
 
 exports.register=async(req,res)=>{
     /*
@@ -202,7 +204,8 @@ exports.requiredSignin=async(req,res,next)=>{
         console.log('[+] RequiredSignin ',token)
         var tokenData = jwt.verify(token,process.env.JWT_SECRET)
         var user = await User.findById(tokenData.id)
-
+        // user.password=undefined
+        req.user=user
         if(!user){
             throw " "
         }else{
@@ -220,6 +223,7 @@ exports.requiredSignin=async(req,res,next)=>{
     next()
 }
 
+
 exports.update=async(req,res)=>{
     console.log('[+]Update profile user data', req.body)
     validation.linkedIn(req.body.linkedIn)
@@ -231,6 +235,9 @@ exports.profilePhoto= async(req,res)=>{
     try{
         const user=await User.findById(req.userId)
         var oldPhoto = user.photo;
+        if(oldPhoto==="default.jpg"){
+            oldPhoto=undefined
+        }
         if(!isEmpty(oldPhoto)){
             fs.unlinkSync(`uploads/profile/${oldPhoto}`)
         }
@@ -265,6 +272,34 @@ exports.getProfilePhoto= async(req,res)=>{
             message:e
         })
     }
+}
+
+
+exports.uploadResume=async(req,res)=>{
+    console.log("[+]Upload resume controller")
+    var user= req.user
+    user.resume.resumes.push({
+        storedName:req.filename,
+        displayName:req.file.originalname
+    })
+    user.resume.main={
+        storedName:req.filename,
+        displayName:req.file.originalname
+    }
+    console.log("[+]The user trying to uplode their resume..",req.user)
+    await user.save()
+    res.json({
+        error:false,
+        message:"The message"
+    })
+}
+
+exports.getResume=(req,res)=>{
+    //decide tha action as per hte user signed
+}
+
+exports.getAllResume=(req,res)=>{
+
 }
 
 exports.PR =(req,res,next)=>{
